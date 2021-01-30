@@ -34,6 +34,7 @@ function editBurg(id) {
   document.getElementById("burgNameReCulture").addEventListener("click", generateNameCulture);
   document.getElementById("burgNameReRandom").addEventListener("click", generateNameRandom);
   document.getElementById("burgPopulation").addEventListener("change", changePopulation);
+  document.getElementById("burgProsperity").addEventListener("change", changeProsperity);
   burgBody.querySelectorAll(".burgFeature").forEach(el => el.addEventListener("click", toggleFeature));
 
   document.getElementById("burgStyleShow").addEventListener("click", showStyleSection);
@@ -53,6 +54,7 @@ function editBurg(id) {
     const b = pack.burgs[id];
     document.getElementById("burgName").value = b.name;
     document.getElementById("burgPopulation").value = rn(b.population * populationRate.value * urbanization.value);
+    document.getElementById("burgProsperity").value = rn(b.prosperity);
     document.getElementById("burgEditAnchorStyle").style.display = +b.port ? "inline-block" : "none";
 
     // toggle features
@@ -236,6 +238,11 @@ function editBurg(id) {
   function changePopulation() {
     const id = +elSelected.attr("data-id");
     pack.burgs[id].population = rn(burgPopulation.value / populationRate.value / urbanization.value, 4);
+  }
+
+  function changeProsperity() {
+    const id = +elSelected.attr("data-id");
+    pack.burgs[id].prosperity = rn(burgProsperity.value);
   }
 
   function toggleFeature() {

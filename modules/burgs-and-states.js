@@ -175,6 +175,8 @@
         if (i%2) b.x = rn(b.x + shift, 2); else b.x = rn(b.x - shift, 2);
         if (cells.r[i]%2) b.y = rn(b.y + shift, 2); else b.y = rn(b.y - shift, 2);
       }
+
+      b.prosperity = 1000;
     }
 
     // de-assign port status if it's the only one on feature

@@ -66,6 +66,7 @@ function overviewBurgs() {
 
     for (const b of filtered) {
       const population = b.population * populationRate.value * urbanization.value;
+      const prosperity = b.prosperity;
       totalPopulation += population;
       const type = b.capital && b.port ? "a-capital-port" : b.capital ? "c-capital" : b.port ? "p-port" : "z-burg";
       const state = pack.states[b.state].name;
@@ -73,14 +74,15 @@ function overviewBurgs() {
       const province = prov ? pack.provinces[prov].name : "";
       const culture = pack.cultures[b.culture].name;
 
-      lines += `<div class="states" data-id=${b.i} data-name="${b.name}" data-state="${state}" data-province="${province}" data-culture="${culture}" data-population=${population} data-type="${type}">
+      lines += `<div class="states" data-id=${b.i} data-name="${b.name}" data-state="${state}" data-prosperity="${prosperity}" data-province="${province}" data-culture="${culture}" data-population=${population} data-type="${type}">
         <span data-tip="Click to zoom into view" class="icon-dot-circled pointer"></span>
         <input data-tip="Burg name. Click and type to change" class="burgName" value="${b.name}" autocorrect="off" spellcheck="false">
         <input data-tip="Burg province" class="burgState" value="${province}" disabled>
         <input data-tip="Burg state" class="burgState" value="${state}" disabled>
+        <input data-tip="Burg prosperity. Type to change" class="burgProsperity" value=${prosperity}>
         <select data-tip="Dominant culture. Click to change burg culture (to change cell cultrure use Cultures Editor)" class="stateCulture">${getCultureOptions(b.culture)}</select>
         <span data-tip="Burg population" class="icon-male"></span>
-        <input data-tip="Burg population. Type to change" class="burgPopulation" value=${si(population)}>
+        <input data-tip="Burg population. Type to change" class="burgPopulation" value=${si(population)}>  
         <div class="burgType">
           <span data-tip="${b.capital ? ' This burg is a state capital' : 'Click to assign a capital status'}" class="icon-star-empty${b.capital ? '' : ' inactive pointer'}"></span>
           <span data-tip="Click to toggle port status" class="icon-anchor pointer${b.port ? '' : ' inactive'}" style="font-size:.9em"></span>
@@ -253,7 +255,7 @@ function overviewBurgs() {
       const capital = b.capital;
       const province = pack.cells.province[b.cell];
       const parent = province ? province + states.length-1 : b.state;
-      return {id, i:b.i, state:b.state, culture:b.culture, province, parent, name:b.name, population, capital, x:b.x, y:b.y}
+      return {id, i:b.i, state:b.state, prosperity:b.prosperity, culture:b.culture, province, parent, name:b.name, population, capital, x:b.x, y:b.y}
     });
     const data = states.concat(burgs);
 
@@ -269,6 +271,7 @@ function overviewBurgs() {
     // prepare svg
     alertMessage.innerHTML = `<select id="burgsTreeType" style="display:block; margin-left:13px; font-size:11px">
       <option value="states" selected>Group by state</option>
+      <option value="prosperity" selected>Group by prosperity</option>
       <option value="cultures">Group by culture</option>
       <option value="parent">Group by province and state</option>
       <option value="provinces">Group by province</option></select>`;
@@ -368,7 +371,7 @@ function overviewBurgs() {
   }
 
   function downloadBurgsData() {
-    let data = "Id,Burg,Province,State,Culture,Religion,Population,Longitude,Latitude,Elevation ("+heightUnit.value+"),Capital,Port,Citadel,Walls,Plaza,Temple,Shanty Town\n"; // headers
+    let data = "Id,Burg,Province,State,Prosperity,Culture,Religion,Population,Longitude,Latitude,Elevation ("+heightUnit.value+"),Capital,Port,Citadel,Walls,Plaza,Temple,Shanty Town\n"; // headers
     const valid = pack.burgs.filter(b => b.i && !b.removed); // all valid burgs
 
     valid.forEach(b => {
@@ -377,6 +380,7 @@ function overviewBurgs() {
       const province = pack.cells.province[b.cell];
       data += province ? pack.provinces[province].fullName + "," : ",";
       data += b.state ? pack.states[b.state].fullName +"," : pack.states[b.state].name + ",";
+      data += b.prosperity + ",";
       data += pack.cultures[b.culture].name + ",";
       data += pack.religions[pack.cells.religion[b.cell]].name + ",";
       data += rn(b.population * populationRate.value * urbanization.value) + ",";
